@@ -1,0 +1,25 @@
+module.exports = (sequelize, Sequelize) => {
+  const Comment = sequelize.define(
+    "comment",
+    {
+      id: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+      },
+      name: {
+        type: Sequelize.STRING(500),
+        allowNull: false,
+      },
+      comment: {
+        type: Sequelize.STRING(1000),
+        allowNull: false,
+      },
+    },
+    {
+      timestamps: true,
+    }
+  );
+  return Comment;
+};
