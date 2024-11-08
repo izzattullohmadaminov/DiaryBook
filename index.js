@@ -28,6 +28,7 @@ app.set("views", "./views");
 // routes
 app.use("/diary", require("./router/diary.router"));
 app.use("/auth", require("./router/auth.router"));
+app.use("/user", require("./router/user.router"));
 // static files
 
 const start = async () => {

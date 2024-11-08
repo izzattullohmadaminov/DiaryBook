@@ -1,8 +1,6 @@
-const { raw } = require("express");
 const db = require("../models/index");
 const Comment = db.comment;
 const Diary = db.diary;
-const User = db.user;
 // Desc    Get all my diaries page
 // Route   GET /diary/my
 // Access  Private
@@ -72,7 +70,7 @@ const getDiaryById = async (req, res) => {
 const updateDiaryPage = async (req, res) => {
   try {
     const diary = await Diary.findByPk(req.params.id, {
-      row: true,
+      raw: true,
     });
     res.render("diary/update-diary", {
       title: "Edit diary",
