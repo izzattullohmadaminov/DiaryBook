@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const db = require("./models/index");
 const session = require("express-session");
 const pgStore = require("connect-pg-simple")(session);
+const csrf = require("csurf");
 const pool = require("./config/db");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -18,6 +19,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(csrf());
 // Initial env variables
 dotenv.config();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +27,10 @@ const PORT = process.env.PORT || 3000;
 // template engine (ejs)
 app.set("view engine", "ejs");
 app.set("views", "./views");
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
 // routes
 app.use("/diary", require("./router/diary.router"));
 app.use("/auth", require("./router/auth.router"));
