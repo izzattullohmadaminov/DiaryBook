@@ -1,4 +1,5 @@
 const db = require("../models/index");
+const { Op } = require("sequelize");
 const Comment = db.comment;
 const Diary = db.diary;
 // Desc    Get all my diaries page
@@ -7,6 +8,7 @@ const Diary = db.diary;
 const getMyDiary = async (req, res) => {
   try {
     const diaries = await Diary.findAll({
+      where: { userId: req.session.user.id },
       raw: true,
       plain: false,
       include: ["user"],
@@ -15,6 +17,29 @@ const getMyDiary = async (req, res) => {
 
     res.render("diary/my-diary", {
       title: "My diary",
+      diaries: diaries.reverse(),
+      isAuthenticated: req.session.isLogged,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send("Error retrieving diaries.");
+  }
+};
+// Desc    Get all diaries page
+// Route   GET /diary/all
+// Access  Private
+const getAllDiary = async (req, res) => {
+  try {
+    const diaries = await Diary.findAll({
+      where: { userId: { [Op.ne]: req.session.user.id } },
+      raw: true,
+      plain: false,
+      include: ["user"],
+      nest: true,
+    });
+
+    res.render("diary/all-diary", {
+      title: "All diary",
       diaries: diaries.reverse(),
       isAuthenticated: req.session.isLogged,
     });
@@ -135,4 +160,5 @@ module.exports = {
   updateDiary,
   deleteDiary,
   addCommentToDiary,
+  getAllDiary,
 };

@@ -30,7 +30,12 @@ app.use("/diary", require("./router/diary.router"));
 app.use("/auth", require("./router/auth.router"));
 app.use("/user", require("./router/user.router"));
 // static files
-
+app.use("/", async (req, res) => {
+  if (req.session.isLogged) {
+    return res.redirect("/diary/my");
+  }
+  res.redirect("/auth/login");
+});
 const start = async () => {
   try {
     const connect = await db.sequelize.sync();
