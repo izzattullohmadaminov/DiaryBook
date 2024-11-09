@@ -3,6 +3,21 @@
   <div class="row">
     <div class="col-md-6 offset-3">
       <form action="/auth/register" method="post">
+        <% if (errorMessage) { %>
+        <div
+          class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x w-50 text-center"
+          style="z-index: 1050"
+          role="alert"
+        >
+          <strong>Error:</strong> <%= errorMessage %>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+        <% } %>
         <div class="mb-3">
           <label for="email" class="form-label">Email address</label>
           <input type="email" class="form-control" name="email" id="email" />

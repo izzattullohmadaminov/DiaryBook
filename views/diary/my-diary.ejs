@@ -9,6 +9,21 @@
             method="post"
             enctype="application/x-www-form-urlencoded"
           >
+            <% if (errorMessage) { %>
+            <div
+              class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x w-50 text-center"
+              style="z-index: 1050"
+              role="alert"
+            >
+              <strong>Error:</strong> <%= errorMessage %>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close"
+              ></button>
+            </div>
+            <% } %>
             <div class="mb-3">
               <label for="imgUrl" class="form-label">Image Url</label>
               <input

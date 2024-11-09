@@ -5,6 +5,7 @@ const db = require("./models/index");
 const session = require("express-session");
 const pgStore = require("connect-pg-simple")(session);
 const csrf = require("csurf");
+const flash = require("connect-flash");
 const pool = require("./config/db");
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -19,6 +20,7 @@ app.use(
     saveUninitialized: false,
   })
 );
+app.use(flash());
 app.use(csrf());
 // Initial env variables
 dotenv.config();

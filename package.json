@@ -11,12 +11,14 @@
   "description": "",
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "connect-flash": "^0.1.1",
     "connect-pg-simple": "^10.0.0",
     "csurf": "^1.11.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
+    "express-validator": "^7.2.0",
     "pg": "^8.13.1",
     "sequelize": "^6.37.5"
   },

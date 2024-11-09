@@ -7,9 +7,13 @@ const User = db.user;
 const getLoginPage = async (req, res) => {
   try {
     const isAuthenticated = req.session.isLogged;
+    const errorMessages = req.flash("error");
+    const errorMessage =
+      errorMessages && errorMessages.length > 0 ? errorMessages[0] : null;
     res.render("auth/login", {
       title: "My diary",
       isAuthenticated,
+      errorMessage,
     });
   } catch (err) {
     console.log(err);
@@ -23,24 +27,28 @@ const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({
-      where: {
-        email,
-      },
+      where: { email },
     });
+
     if (userExist) {
       const isMatch = await bcrypt.compare(password, userExist.password);
+
       if (isMatch) {
         req.session.isLogged = true;
         req.session.user = userExist;
-        res.redirect("/diary/my");
+        return res.redirect("/diary/my"); // Kirish muvaffaqiyatli
       } else {
-        res.redirect("/auth/login");
+        req.flash("error", "Parol xato kiritildi"); // Flash xabarni redirectdan oldin
+        return res.redirect("/auth/login");
       }
     } else {
-      res.redirect("/auth/login");
+      req.flash("error", "Foydalanuvchi topilmadi"); // Flash xabarni redirectdan oldin
+      return res.redirect("/auth/login");
     }
   } catch (err) {
     console.log(err);
+    req.flash("error", "Serverda xatolik yuz berdi");
+    res.redirect("/auth/login");
   }
 };
 
@@ -60,10 +68,14 @@ const logout = async (req, res) => {
 // Route   GET /auth/register
 // Access  Public
 const getRegisterPage = async (req, res) => {
+  const errorMessages = req.flash("error");
+  const errorMessage =
+    errorMessages && errorMessages.length > 0 ? errorMessages[0] : null;
   try {
     res.render("auth/register", {
       title: "Register",
       isAuthenticated: req.session.isAuthenticated || false,
+      errorMessage,
     });
   } catch (err) {
     console.log(err);
@@ -76,10 +88,12 @@ const RegisterUser = async (req, res) => {
   try {
     const { name, email, password, password2 } = req.body;
     if (password !== password2) {
+      req.flash("error", "Parollar mos emas");
       res.redirect("/auth/register");
     }
     const userExist = await User.findOne({ where: { email } });
     if (userExist) {
+      req.flash("error", "Foydalanuvchi topildi");
       res.redirect("/auth/register");
     }
     const salt = await bcrypt.genSalt(10);

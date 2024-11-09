@@ -1,5 +1,20 @@
 <%- include('../layouts/main.ejs') -%> <%- include('../partials/navbar.ejs') -%>
 <div class="container">
+  <% if (errorMessage) { %>
+  <div
+    class="alert alert-danger alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x w-50 text-center"
+    style="z-index: 1050"
+    role="alert"
+  >
+    <strong>Error:</strong> <%= errorMessage %>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  <% } %>
   <div class="row">
     <div class="col-md-6 offset-3">
       <div class="card mb-5 mt-5">

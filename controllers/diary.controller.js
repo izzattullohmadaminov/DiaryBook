@@ -15,11 +15,14 @@ const getMyDiary = async (req, res) => {
       include: ["user"],
       nest: true,
     });
-
+    const errorMessages = req.flash("error");
+    const errorMessage =
+      errorMessages && errorMessages.length > 0 ? errorMessages[0] : null;
     res.render("diary/my-diary", {
       title: "My diary",
       diaries: diaries.reverse(),
       isAuthenticated: req.session.isLogged,
+      errorMessage,
     });
   } catch (err) {
     console.log(err);
@@ -56,6 +59,10 @@ const getAllDiary = async (req, res) => {
 const addNewDiary = async (req, res) => {
   try {
     const { text, imageUrl } = req.body;
+    if (text === "") {
+      req.flash("error", "Diaryni kiriting");
+      return res.redirect("/diary/my"); // res.redirect to'g'ri ishlatilgan
+    }
     await Diary.create({
       text,
       imageUrl,
@@ -64,8 +71,11 @@ const addNewDiary = async (req, res) => {
     res.redirect("/diary/my");
   } catch (err) {
     console.log(err);
+    req.flash("error", "Diary qo'shishda xatolik yuz berdi");
+    res.redirect("/diary/new");
   }
 };
+
 // Desc    Get all my diaries page
 // Route   GET /diary/my
 // Access  Private
@@ -78,8 +88,8 @@ const getDiaryById = async (req, res) => {
       nest: true,
     });
     const diary = data.toJSON();
-    console.log(diary);
     const comments = diary.comments ? diary.comments.reverse() : [];
+
     res.render("diary/one-diary", {
       title: "one diary",
       diary: diary,
@@ -98,10 +108,14 @@ const updateDiaryPage = async (req, res) => {
     const diary = await Diary.findByPk(req.params.id, {
       raw: true,
     });
+    const errorMessages = req.flash("error");
+    const errorMessage =
+      errorMessages && errorMessages.length > 0 ? errorMessages[0] : null;
     res.render("diary/update-diary", {
       title: "Edit diary",
       diary: diary,
       isAuthenticated: req.session.isLogged,
+      errorMessage,
     });
   } catch (err) {
     console.log(err);
@@ -145,6 +159,10 @@ const deleteDiary = async (req, res) => {
 const addCommentToDiary = async (req, res) => {
   try {
     const user = await User.findByPk(req.session.user.id);
+    if (req.body.comment === "") {
+      req.flash("error", "Commentni kiriting");
+      return res.redirect("/diary/" + req.params.id);
+    }
     await Comment.create({
       name: user.name,
       comment: req.body.comment,
